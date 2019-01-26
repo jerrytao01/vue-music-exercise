@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div>这是一个div</div>
 </template>
 
 <script>
