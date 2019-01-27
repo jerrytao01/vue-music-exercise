@@ -33,15 +33,33 @@ export default {
     height .88rem
     line-height .88rem
     background $color-linear-gradient
-    font-size $font-size-m
+    font-size $font-size-ml
     color rgba(255, 255, 255, .5)
     .tab-item
       flex 1
+      position relative
       text-align center
+      .tab-link
+        transition all .2s linear
+      &:after
+        content ''
+        position absolute
+        z-index 2
+        bottom .12rem
+        left 50%
+        display block
+        width 0
+        height 2px
+        border-radius .2rem
+        background #fff
+        transition all .2s linear
+        transform translate(-50%)
+      &.router-link-active:after
+        width .4rem
+
       &.router-link-active
         .tab-link
           color $font-color-white
-          font-size $font-size-ml
 
   .back-img
     position fixed
