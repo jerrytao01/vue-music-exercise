@@ -36,7 +36,13 @@ export default {
     }
   },
   methods: {
-    _setBannerWidth () {
+    _refresh () {
+      if (this.slide) {
+        this._setBannerWidth(true)
+        this.slide.refresh()
+      }
+    },
+    _setBannerWidth (isResize) {
       this.children = this.$refs.bannerGroup.children // 获取所有的子元素
       let width = 0
       let viewWidth = this.$refs.banner.clientWidth // 获取视口的宽度
@@ -46,7 +52,7 @@ export default {
         child.style.width = viewWidth + 'px' // 每一张轮播图的宽赋值
         width += viewWidth
       }
-      if (this.loop) {
+      if (this.loop && !isResize) {
         width += 2 * viewWidth
       }
       this.$refs.bannerGroup.style.width = width + 'px'
@@ -65,6 +71,31 @@ export default {
           speed: 400
         }
       })
+      this.slide.on('scrollEnd', this._scrollEnd)
+      this.slide.on('touchEnd', () => {
+        if (this.autoPlay) {
+          this._play()
+        }
+      })
+      this.slide.on('beforeScrollStart', () => {
+        if (this.autoPlay) {
+          clearTimeout(this.timer)
+        }
+      })
+    },
+    _scrollEnd () {
+      let pageIndex = this.slide.getCurrentPage().pageX // better-scroll 会自动派发一个记录第几页的事件
+      console.log(pageIndex)
+      this.currentPageIndex = pageIndex
+      if (this.autoPlay) {
+        this._play()
+      }
+    },
+    _play () {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.slide.next()
+      }, this.interval)
     }
   },
   mounted () {
@@ -72,7 +103,28 @@ export default {
       this._setBannerWidth()
       this._initDots()
       this._initBanner()
+
+      if (this.autoPlay) { // 初始化完成的时候，判读是否是自动轮播
+        this._play()
+      }
     }, 20)
+
+    window.addEventListener('resize', () => { // 监听窗口宽度变化
+      if (!this.slide) {
+        return
+      }
+      clearTimeout(this.reTimer)
+      this.reTimer = setTimeout(() => {
+        if (this.slide.isInTransition) {
+          this._scrollEnd()
+        } else {
+          if (this.autoPlay) {
+            this._play()
+          }
+        }
+        this._refresh()
+      }, 30)
+    })
   }
 }
 </script>
@@ -111,6 +163,7 @@ export default {
         height .16rem
         border-radius 50%
         background rgba(255, 255, 255, .4)
+        transition all .2s linear
         &.active
           background $color-theme
 </style>
