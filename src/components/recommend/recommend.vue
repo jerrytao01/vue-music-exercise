@@ -1,13 +1,13 @@
 <template>
   <div class="recommend">
-    <scroll class="wrapper">
+    <scroll class="wrapper" ref="scroll">
       <div> <!--这是的距离是需要滚动的内容-->
         <div class="banner-wrapper" v-if="bannerList.length">
           <div class="banner-wrapper-view">
             <banner>
               <div v-for="item in bannerList" :key="item.encodeId">
                 <a href="javascript:;">
-                  <img :src="item.imageUrl" alt="图片加载失败">
+                  <img @load="loadImg" :src="item.imageUrl" alt="图片加载失败">
                 </a>
               </div>
             </banner>
@@ -49,6 +49,13 @@ export default {
     }
   },
   methods: {
+    loadImg () {
+      if (!this.checkLoaded) {
+        this.$refs.scroll.refresh()
+        this.checkLoaded = true
+        console.log(this.$refs.scroll)
+      }
+    },
     _getBannerList () {
       axios.get(url + bannerUrl).then((res) => {
         if (res.status === ERR_OK) {
