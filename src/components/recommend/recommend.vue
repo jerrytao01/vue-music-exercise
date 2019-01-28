@@ -18,7 +18,7 @@
           <div class="list-content-wrapper" v-for="(items, index) in caculateDiscList" :key="index">
             <a v-for="item in items" class="item-wrapper" :key="item.id">
               <div class="img-wrapper">
-                <img class="list-img" :src="item.picUrl" alt="">
+                <img class="list-img" v-lazy="item.picUrl" alt="">
                 <div class="has-listen"><span class="iconfont icon-listen listen"></span>{{_caculateListen(item.playCount)}}
                 </div>
               </div>
@@ -26,6 +26,9 @@
             </a>
           </div>
         </div>
+      </div>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
       </div>
     </scroll>
   </div>
@@ -36,6 +39,7 @@ import axios from 'axios'
 import {ERR_OK, url} from '../../api/config'
 import Banner from '../../base/banner/banner'
 import Scroll from '../../base/scroll/scroll'
+import Loading from '../../base/loading/loading'
 
 const bannerUrl = '/banner'
 const recommendList = '/personalized'
@@ -53,7 +57,6 @@ export default {
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh()
         this.checkLoaded = true
-        console.log(this.$refs.scroll)
       }
     },
     _getBannerList () {
@@ -97,7 +100,8 @@ export default {
   },
   components: {
     Banner,
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
@@ -112,6 +116,10 @@ export default {
     .wrapper
       overflow hidden // 这是为了给视口一个固定的位置
       height 100%
+      .loading-container
+        position absolute
+        width 100%
+        top 50%
 
       .banner-wrapper
         position relative
