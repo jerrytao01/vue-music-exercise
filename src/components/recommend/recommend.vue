@@ -17,7 +17,7 @@
         <a v-for="item in items" class="item-wrapper" :key="item.id">
           <div class="img-wrapper">
             <img class="list-img" :src="item.picUrl" alt="">
-            <div class="has-listen"><span class="iconfont icon-listen listen"></span>511.5万</div>
+            <div class="has-listen"><span class="iconfont icon-listen listen"></span>{{_caculateListen(item.playCount)}}</div>
           </div>
           <p class="list-desc">{{item.name}}</p>
         </a>
@@ -56,6 +56,17 @@ export default {
           this.discList = res.data.result
         }
       })
+    },
+    _caculateListen (count) {
+      let result = null
+      if (count > 9999) {
+        result = (Math.floor(count / 1000)) / 10 + '万'
+      } else if (count <= 9999 > count > 0) {
+        result = (Math.floor(count / 100)) / 10 + 'k'
+      } else {
+        return
+      }
+      return result
     }
   },
   computed: {
