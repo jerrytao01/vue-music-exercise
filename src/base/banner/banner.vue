@@ -85,7 +85,6 @@ export default {
     },
     _scrollEnd () {
       let pageIndex = this.slide.getCurrentPage().pageX // better-scroll 会自动派发一个记录第几页的事件
-      console.log(pageIndex)
       this.currentPageIndex = pageIndex
       if (this.autoPlay) {
         this._play()
