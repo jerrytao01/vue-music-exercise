@@ -13,44 +13,13 @@
     </div>
     <h2 class="title-list">推荐歌单<span class="iconfont icon-back-icon back-icon"></span></h2>
     <div class="recommend-list-wrapper">
-      <div class="list-content-wrapper">
-        <a class="item-wrapper" href="">
+      <div class="list-content-wrapper" v-for="(items, index) in caculateDiscList" :key="index">
+        <a v-for="item in items" class="item-wrapper" :key="item.id">
           <div class="img-wrapper">
-            <img class="list-img" src="http://p1.music.126.net/uRCu8NgrQ8e2JlZ40QaZXA==/109951163821691576.webp?imageView&thumbnail=246x0&quality=75&tostatic=0&type=webp" alt="">
+            <img class="list-img" :src="item.picUrl" alt="">
+            <div class="has-listen"><span class="iconfont icon-listen listen"></span>511.5万</div>
           </div>
-          <p class="list-desc">小年了|| 这时候你回家了吗？</p>
-        </a>
-        <a class="item-wrapper" href="">
-          <div class="img-wrapper">
-            <img class="list-img" src="http://p1.music.126.net/uRCu8NgrQ8e2JlZ40QaZXA==/109951163821691576.webp?imageView&thumbnail=246x0&quality=75&tostatic=0&type=webp" alt="">
-          </div>
-          <p class="list-desc">小年了|| 这时候你回家了吗？</p>
-        </a>
-        <a class="item-wrapper" href="">
-          <div class="img-wrapper">
-            <img class="list-img" src="http://p1.music.126.net/uRCu8NgrQ8e2JlZ40QaZXA==/109951163821691576.webp?imageView&thumbnail=246x0&quality=75&tostatic=0&type=webp" alt="">
-          </div>
-          <p class="list-desc">小年了|| 这时候你回家了吗？</p>
-        </a>
-      </div>
-      <div class="list-content-wrapper">
-        <a class="item-wrapper" href="">
-          <div class="img-wrapper">
-            <img class="list-img" src="http://p1.music.126.net/uRCu8NgrQ8e2JlZ40QaZXA==/109951163821691576.webp?imageView&thumbnail=246x0&quality=75&tostatic=0&type=webp" alt="">
-          </div>
-          <p class="list-desc">小年了|| 这时候你回家了吗？</p>
-        </a>
-        <a class="item-wrapper" href="">
-          <div class="img-wrapper">
-            <img class="list-img" src="http://p1.music.126.net/uRCu8NgrQ8e2JlZ40QaZXA==/109951163821691576.webp?imageView&thumbnail=246x0&quality=75&tostatic=0&type=webp" alt="">
-          </div>
-          <p class="list-desc">小年了|| 这时候你回家了吗？</p>
-        </a>
-        <a class="item-wrapper" href="">
-          <div class="img-wrapper">
-            <img class="list-img" src="http://p1.music.126.net/uRCu8NgrQ8e2JlZ40QaZXA==/109951163821691576.webp?imageView&thumbnail=246x0&quality=75&tostatic=0&type=webp" alt="">
-          </div>
-          <p class="list-desc">小年了|| 这时候你回家了吗？</p>
+          <p class="list-desc">{{item.name}}</p>
         </a>
       </div>
     </div>
@@ -87,6 +56,16 @@ export default {
           this.discList = res.data.result
         }
       })
+    }
+  },
+  computed: {
+    caculateDiscList () {
+      let arr = []
+      for (let i = 0; i < this.discList.length; i += 3) {
+        arr.push(this.discList.slice(i, i + 3))
+      }
+      console.log(arr)
+      return arr
     }
   },
   created () {
@@ -127,8 +106,7 @@ export default {
         font-size $font-size-s
         transform rotate(180deg)
     .recommend-list-wrapper
-      padding 0 .12rem
-      background: #eee
+      padding-left .12rem
       .list-content-wrapper
         overflow hidden
         padding-bottom .12rem
@@ -139,8 +117,6 @@ export default {
           width 33.33%
           padding-right .12rem
           padding-left 0
-          &:last-child
-            padding-right 0
           .img-wrapper
             position relative
             padding-bottom 100%
@@ -149,6 +125,15 @@ export default {
               width 100%
               top 0
               left 0
+            .has-listen
+              position absolute
+              right 4px
+              top 4px
+              font-size $font-size-xs
+              color #fff
+              .listen
+                margin-right 2px
+                font-size .24rem
           .list-desc
             display -webkit-box
             -webkit-box-orient vertical
@@ -159,4 +144,5 @@ export default {
             line-clamp: 2
             font-size $font-size-xs
             line-height .32rem
+            color #4d4d4d
 </style>
