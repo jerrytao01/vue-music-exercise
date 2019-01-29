@@ -11,13 +11,31 @@
         <span class="tab-link">歌单</span>
       </router-link>
     </div>
-    <div class="back-img"></div>
+    <transition name="slide">
+      <div class="back-img" v-show="showBg"></div>
+    </transition>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'mtab'
+  name: 'mtab',
+  data () {
+    return {
+      showBg: null
+    }
+  },
+  methods: {
+    routerPath () {
+      this.showBg = this.$router.currentRoute.path === '/recommend'
+    }
+  },
+  mounted () {
+    this.showBg = this.$router.currentRoute.path === '/recommend'
+  },
+  watch: {
+    '$route': 'routerPath'
+  }
 }
 </script>
 
@@ -67,4 +85,9 @@ export default {
     top 1.76rem
     height 1.44rem
     background $color-linear-gradient
+
+  .slide-enter, .slide-leave-to
+    height 0
+  .slide-enter-active, .slide-leave-active
+    transition all .2s linear
 </style>
