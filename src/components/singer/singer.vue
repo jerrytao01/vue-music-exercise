@@ -1,11 +1,14 @@
 <template>
-  <div>singer页面</div>
+  <div>
+    <listview :list="singers"></listview>
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 import {ERR_OK, url} from '../../api/config'
 import Singer from '../../common/js/singer'
+import Listview from '../../base/listview/listview'
 
 const singUrl = '/top/artists'
 const limit = 'limit=100'
@@ -15,6 +18,7 @@ const pinyin = require('pinyin')
 
 export default {
   name: 'singer',
+  components: {Listview},
   data () {
     return {
       singers: null
@@ -72,11 +76,12 @@ export default {
           aliaName: item.alias[0]
         }))
       })
-      let hot = []
-      let ret = []
+      // 对有序列表的处理
+      let hot = [] // 热门歌手
+      let ret = [] // 排序A-Z的数据
       for (let key in map) {
         let val = map[key]
-        if (val.title.match(/[A-Z]/)) {
+        if (val.title.match(/[a-zA-Z]/)) {
           ret.push(val)
         } else if (val.title === HOT_NAME) {
           hot.push(val)
