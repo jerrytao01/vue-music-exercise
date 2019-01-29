@@ -18,7 +18,6 @@ const pinyin = require('pinyin')
 
 export default {
   name: 'singer',
-  components: {Listview},
   data () {
     return {
       singers: null
@@ -41,7 +40,6 @@ export default {
             item.toFirstLetter = py[0][0].toUpperCase()
           })
           this.singers = this._normalizeSinger(singers)
-          console.log(this.singers)
         }
       })
     },
@@ -95,7 +93,8 @@ export default {
   },
   created () {
     this._getSinger()
-  }
+  },
+  components: {Listview}
 }
 </script>
 
