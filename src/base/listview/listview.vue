@@ -11,7 +11,11 @@
           </ul>
       </li>
     </ul>
-    <div class="slide-list" v-if="list" @touchstart="onTouchSlideStart">
+    <div
+      class="slide-list"
+      v-if="list"
+      @touchstart="onTouchSlideStart"
+      @touchmove.stop.prevent="onTouchSlideMove">
       <ul>
         <li :data-index="index" class="slide-item" v-for="(item, index) in slideList" :key="index">{{item}}</li>
       </ul>
@@ -22,6 +26,8 @@
 <script>
 import Scroll from '../scroll/scroll'
 import {getData} from '../../common/js/dom'
+
+const ITEM_HEIGHT = 18
 
 export default {
   name: 'listview',
@@ -35,9 +41,19 @@ export default {
     }
   },
   methods: {
-    onTouchSlideStart (e) {
-      let slideIndex = getData(e.target, 'index')
+    onTouchSlideStart (e) { // 监听移动开始事件
+      let slideIndex = parseInt(getData(e.target, 'index'))
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY // 保存第一次触摸的时候Y值
+      this.touch.firstIndex = slideIndex
       this.$refs.listView.scrollToElement(this.$refs.listViewGroup[slideIndex])
+    },
+    onTouchSlideMove (e) { // 监听移动事件
+      let firstTouch = e.touches[0]
+      this.touch.y2 = firstTouch.pageY
+      let difference = (this.touch.y2 - this.touch.y1) / ITEM_HEIGHT | 0
+      let finialIndex = this.touch.firstIndex + difference
+      this.$refs.listView.scrollToElement(this.$refs.listViewGroup[finialIndex])
     }
   },
   computed: {
@@ -46,6 +62,9 @@ export default {
         return group.title.substring(0, 1)
       })
     }
+  },
+  created () {
+    this.touch = {}
   }
 }
 </script>
