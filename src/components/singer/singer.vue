@@ -1,6 +1,7 @@
 <template>
   <div>
-    <listview :list="singers"></listview>
+    <listview :list="singers" @select="selectSinger"></listview>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -24,6 +25,11 @@ export default {
     }
   },
   methods: {
+    selectSinger (singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      })
+    },
     _getSinger () {
       axios.get(url + singUrl + '?' + limit).then((res) => {
         if (res.status === ERR_OK) {

@@ -9,7 +9,7 @@
       <li class="listview-group" v-for="(group, index) in list" :key="index" ref="listViewGroup">
         <h2 class="title">{{group.title}}</h2>
           <ul>
-            <li class="listview-item" v-for="item in group.items" :key="item.id">
+            <li  @click="selectItme(item)" class="listview-item" v-for="item in group.items" :key="item.id">
               <img class="avatar" v-lazy="item.avatar" alt="">
               <p class="singer-name">{{item.name}}</p>
             </li>
@@ -57,6 +57,9 @@ export default {
     }
   },
   methods: {
+    selectItme (item) {
+      this.$emit('select', item)
+    },
     onTouchSlideStart (e) { // 监听移动开始事件
       let slideIndex = parseInt(getData(e.target, 'index'))
       let firstTouch = e.touches[0]
