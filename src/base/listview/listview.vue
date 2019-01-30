@@ -57,17 +57,29 @@ export default {
       let firstTouch = e.touches[0]
       this.touch.y1 = firstTouch.pageY // 保存第一次触摸的时候Y值
       this.touch.firstIndex = slideIndex
-      this.$refs.listView.scrollToElement(this.$refs.listViewGroup[slideIndex])
+      this._scrollTo(slideIndex)
     },
     onTouchSlideMove (e) { // 监听移动事件
       let firstTouch = e.touches[0]
       this.touch.y2 = firstTouch.pageY
       let difference = (this.touch.y2 - this.touch.y1) / ITEM_HEIGHT | 0
       let finialIndex = this.touch.firstIndex + difference
-      this.$refs.listView.scrollToElement(this.$refs.listViewGroup[finialIndex])
+      this._scrollTo(finialIndex)
     },
     onScrollEvent (pos) {
       this.scrollY = pos.y
+    },
+    _scrollTo (index) {
+      if (!index && index !== 0) {
+        return
+      }
+      if (index < 0) {
+        index = 0
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
+      console.log(index)
+      this.$refs.listView.scrollToElement(this.$refs.listViewGroup[index])
     },
     _caculateHeight () { // 计算高度
       this.listHeight = []
@@ -89,16 +101,23 @@ export default {
     },
     scrollY (newY) {
       const listHeight = this.listHeight
-      for (let i = 0; i < listHeight.length; i++) {
-        let height1 = listHeight[i]
-        let height2 = listHeight[i + 1]
-        if (!height2 || (-newY > height1 && -newY < height2)) {
+      // 滚动到顶部, newY大于0，就让currentindex一直停留第一个
+      if (newY > 0) {
+        this.currentIndex = 0
+        return
+      }
+      // 滚动到中部地区
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let heightMin = listHeight[i] // 下限
+        let heightMax = listHeight[i + 1] // 上限
+        // newY是负值
+        if (-newY >= heightMin && -newY < heightMax) {
           this.currentIndex = i
-          console.log(this.currentIndex)
           return
         }
       }
-      this.currentIndex = 0
+      // 滚动到底部地区
+      this.currentIndex = listHeight.length - 2
     }
   },
   computed: {
