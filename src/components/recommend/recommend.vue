@@ -5,7 +5,7 @@
         <div class="banner-wrapper" v-if="bannerList.length">
           <div class="banner-wrapper-view">
             <banner>
-              <div v-for="item in bannerList" :key="item.encodeId">
+              <div v-for="(item, index) in bannerList" :key="index"><!--修改key值，解决出现广告的bug-->
                 <a href="javascript:;">
                   <img @load="loadImg" :src="item.imageUrl" alt="图片加载失败">
                 </a>

@@ -1,5 +1,10 @@
 <template>
-  <scroll :data="list" class="listview" ref="listView">
+  <scroll :data="list"
+          :probe-type="probeType"
+          class="listview"
+          :listen-scroll="listenScroll"
+          @scroll="onScrollEvent"
+          ref="listView">
     <ul>
       <li class="listview-group" v-for="(group, index) in list" :key="index" ref="listViewGroup">
         <h2 class="title">{{group.title}}</h2>
@@ -17,7 +22,7 @@
       @touchstart="onTouchSlideStart"
       @touchmove.stop.prevent="onTouchSlideMove">
       <ul>
-        <li :data-index="index" class="slide-item" v-for="(item, index) in slideList" :key="index">{{item}}</li>
+        <li :class="{'active': currentIndex === index}" :data-index="index" class="slide-item" v-for="(item, index) in slideList" :key="index">{{item}}</li>
       </ul>
     </div>
   </scroll>
@@ -40,6 +45,12 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      scrollY: -1,
+      currentIndex: 0
+    }
+  },
   methods: {
     onTouchSlideStart (e) { // 监听移动开始事件
       let slideIndex = parseInt(getData(e.target, 'index'))
@@ -54,6 +65,40 @@ export default {
       let difference = (this.touch.y2 - this.touch.y1) / ITEM_HEIGHT | 0
       let finialIndex = this.touch.firstIndex + difference
       this.$refs.listView.scrollToElement(this.$refs.listViewGroup[finialIndex])
+    },
+    onScrollEvent (pos) {
+      this.scrollY = pos.y
+    },
+    _caculateHeight () { // 计算高度
+      this.listHeight = []
+      const list = this.$refs.listViewGroup
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+    }
+  },
+  watch: {
+    list () {
+      setTimeout(() => {
+        this._caculateHeight()
+      }, 20)
+    },
+    scrollY (newY) {
+      const listHeight = this.listHeight
+      for (let i = 0; i < listHeight.length; i++) {
+        let height1 = listHeight[i]
+        let height2 = listHeight[i + 1]
+        if (!height2 || (-newY > height1 && -newY < height2)) {
+          this.currentIndex = i
+          console.log(this.currentIndex)
+          return
+        }
+      }
+      this.currentIndex = 0
     }
   },
   computed: {
@@ -64,7 +109,10 @@ export default {
     }
   },
   created () {
+    this.probeType = 3
     this.touch = {}
+    this.listenScroll = true
+    this.listHeight = []
   }
 }
 </script>
