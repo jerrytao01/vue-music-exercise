@@ -10,6 +10,7 @@ import axios from 'axios'
 import {ERR_OK, url} from '../../api/config'
 import Singer from '../../common/js/singer'
 import Listview from '../../base/listview/listview'
+import {mapMutations} from 'vuex'
 
 const singUrl = '/top/artists'
 const limit = 'limit=100'
@@ -29,6 +30,7 @@ export default {
       this.$router.push({
         path: `/singer/${singer.id}`
       })
+      this.setSinger(singer)
     },
     _getSinger () {
       axios.get(url + singUrl + '?' + limit).then((res) => {
@@ -95,7 +97,10 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
-    }
+    },
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   },
   created () {
     this._getSinger()
