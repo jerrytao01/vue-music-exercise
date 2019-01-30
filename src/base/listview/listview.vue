@@ -25,6 +25,9 @@
         <li :class="{'active': currentIndex === index}" :data-index="index" class="slide-item" v-for="(item, index) in slideList" :key="index">{{item}}</li>
       </ul>
     </div>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <h2 class="fixed-title">{{fixedTitle}}</h2>
+    </div>
   </scroll>
 </template>
 
@@ -33,6 +36,7 @@ import Scroll from '../scroll/scroll'
 import {getData} from '../../common/js/dom'
 
 const ITEM_HEIGHT = 18
+const TITLE_HEIGHT = 30
 
 export default {
   name: 'listview',
@@ -48,7 +52,8 @@ export default {
   data () {
     return {
       scrollY: -1,
-      currentIndex: 0
+      currentIndex: 0,
+      diff: -1 // 滚动的偏差
     }
   },
   methods: {
@@ -78,7 +83,6 @@ export default {
       } else if (index > this.listHeight.length - 2) {
         index = this.listHeight.length - 2
       }
-      console.log(index)
       this.$refs.listView.scrollToElement(this.$refs.listViewGroup[index])
     },
     _caculateHeight () { // 计算高度
@@ -113,11 +117,21 @@ export default {
         // newY是负值
         if (-newY >= heightMin && -newY < heightMax) {
           this.currentIndex = i
+          this.diff = heightMax + newY
           return
         }
       }
       // 滚动到底部地区
       this.currentIndex = listHeight.length - 2
+    },
+    diff (newVal) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if (this.fixedTop === fixedTop) {
+        return
+      }
+      this.fixedTop = fixedTop
+      console.log(fixedTop)
+      this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
     }
   },
   computed: {
@@ -125,6 +139,15 @@ export default {
       return this.list.map((group) => {
         return group.title.substring(0, 1)
       })
+    },
+    fixedTitle () {
+      if (!this.list) {
+        return
+      }
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.list[this.currentIndex] ? this.list[this.currentIndex].title : ''
     }
   },
   created () {
@@ -184,4 +207,15 @@ export default {
         color $font-color-l
         &.active
           color $color-theme
+    .list-fixed
+      position absolute
+      top 0
+      width 100%
+      height .6rem
+      line-height .6rem
+      background #f0f0f0
+      font-size $font-size-s
+      color $font-color-m
+      .fixed-title
+        margin-left .3rem
 </style>
