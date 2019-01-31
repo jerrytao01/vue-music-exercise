@@ -63,7 +63,7 @@ export default {
           map.hot.items.push(new Singer({
             id: item.id,
             name: item.name,
-            avatar: item.img1v1Url,
+            avatar: item.picUrl,
             aliaName: item.alias[0]
           }))
         }

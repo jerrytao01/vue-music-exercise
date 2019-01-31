@@ -133,7 +133,6 @@ export default {
         return
       }
       this.fixedTop = fixedTop
-      console.log(fixedTop)
       this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
     }
   },
