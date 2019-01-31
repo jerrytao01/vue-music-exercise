@@ -27,11 +27,6 @@ export default {
         return []
       }
     }
-  },
-  watch: {
-    songs () {
-      console.log(this.songs)
-    }
   }
 }
 </script>
@@ -55,6 +50,7 @@ export default {
       .content
         flex 1
         height 100%
+        overflow hidden
         border-1px(#eee)
         .content-wrapper
           display flex
@@ -63,12 +59,14 @@ export default {
           .name
             flex 1
             margin-top .2rem
-            font-size $font-size-l
+            font-size $font-size-ml
             color $font-color-d
+            no-wrap()
           .desc
             flex 1
-            font-size $font-size-sm
+            font-size $font-size-s
             color $font-color-l
+            no-wrap()
       .play-icon
         width 1rem
         height 100%
