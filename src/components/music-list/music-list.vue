@@ -4,14 +4,21 @@
       <span class="iconfont icon-back-icon icon-back"></span>
       <span class="back-title">返回</span>
     </div>
-    <div class="background-img">
+    <div class="background-img" ref="bgImg">
       <img class="singer-img" :src="bgImage" alt="">
       <p class="singer-name">{{title}}<span v-show="aliaName.length">({{aliaName}})</span></p>
     </div>
+    <scroll class="list" ref="list">
+      <div class="music-list-wrapper">
+        <song-list :songs="songs"></song-list>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script>
+import Scroll from '../../base/scroll/scroll'
+import SongList from '../../base/song-list/song-list'
 export default {
   name: 'music-list',
   props: {
@@ -38,7 +45,11 @@ export default {
     backToSinger () {
       this.$router.back()
     }
-  }
+  },
+  mounted () {
+    this.$refs.list.$el.style.top = `${this.$refs.bgImg.clientHeight}px`
+  },
+  components: {SongList, Scroll}
 }
 </script>
 
@@ -79,7 +90,14 @@ export default {
       .singer-name
         position absolute
         left .24rem
-        bottom .1rem
+        bottom .48rem
         color #fff
         font-size $font-size-xl
+    .list
+      position absolute
+      top 0
+      bottom 0
+      width 100%
+      background: #fafafa
+      overflow hidden
 </style>
