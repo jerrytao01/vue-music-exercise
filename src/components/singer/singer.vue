@@ -48,6 +48,7 @@ export default {
             item.toFirstLetter = py[0][0].toUpperCase()
           })
           this.singers = this._normalizeSinger(singers)
+          console.log(this.singers)
         }
       })
     },
@@ -63,8 +64,9 @@ export default {
           map.hot.items.push(new Singer({
             id: item.id,
             name: item.name,
-            avatar: item.picUrl,
-            aliaName: item.alias[0]
+            avatar: item.img1v1Url,
+            aliaName: item.alias[0],
+            bgImage: item.picUrl
           }))
         }
 
@@ -79,7 +81,8 @@ export default {
           id: item.id,
           name: item.name,
           avatar: item.img1v1Url,
-          aliaName: item.alias[0]
+          aliaName: item.alias[0],
+          bgImage: item.picUrl
         }))
       })
       // 对有序列表的处理
