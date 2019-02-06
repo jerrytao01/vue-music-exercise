@@ -12,7 +12,8 @@
     <div class="top-bg-layer" ref="topLayer">{{title}}<span v-show="aliaName.length">({{aliaName}})</span></div>
     <scroll @scroll="onscrollEvent" class="list" :probe-type="probeType" :listen-scroll="listenScroll" ref="list">
       <div class="music-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list @select="selectItem"
+                   :songs="songs"></song-list>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -26,6 +27,7 @@ import Scroll from '../../base/scroll/scroll'
 import SongList from '../../base/song-list/song-list'
 import {prefixStyle} from '../../common/js/dom'
 import Loading from '../../base/loading/loading'
+import {mapActions} from 'vuex'
 
 const topHeight = 44 // 定义顶部预留高度
 const transform = prefixStyle('transform')
@@ -63,7 +65,16 @@ export default {
     },
     onscrollEvent (pos) {
       this.scrollY = pos.y
-    }
+    },
+    selectItem (item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index: index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   watch: {
     scrollY (newY) {
