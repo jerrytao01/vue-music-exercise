@@ -1,6 +1,7 @@
 <template>
   <div class="player" v-show="playList.length>0">
-    <div class="normal-player" v-show="fullScreen">
+    <transition name="normal">
+      <div class="normal-player" v-show="fullScreen">
       <div class="background">
         <div class="mask"></div>
         <img width="100%" height="100%" :src="currentSong.image">
@@ -47,7 +48,24 @@
         </div>
       </div>
     </div>
-    <div class="mini-player" v-show="!fullScreen" @click="open"></div>
+    </transition>
+    <transition name="mini">
+      <div class="mini-player" v-show="!fullScreen" @click="open">
+        <div class="img-wrapper">
+          <img :src="currentSong.image">
+        </div>
+        <div class="song-info">
+          <h3 class="song-name">{{currentSong.name}}</h3>
+          <p class="singer">{{currentSong.singer}}</p>
+        </div>
+        <div class="play-button">
+          <span class="iconfont icon-Triangle"></span>
+        </div>
+        <div class="play-list">
+          <span class="iconfont icon-more"></span>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -156,6 +174,7 @@ export default {
               display block
               width 100%
       .bottom
+        height 100%
         .lyric
           margin-top 1rem
           width 100%
@@ -165,7 +184,8 @@ export default {
             color #fff
         .control-wrapper
           position absolute
-          bottom 1.5rem
+          /*bottom 1.5rem*/
+          margin-top 1.5rem
           width 100%
           .control
             display flex
@@ -180,6 +200,17 @@ export default {
                 color #141a29
                 &.play-icon
                   font-size .6rem
+      &.normal-enter-active, &.normal-leave-active
+        transition: all 0.4s
+        .top, .bottom
+          transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32)
+      &.normal-enter, &.normal-leave-to
+        opacity: 0
+        .top
+          transform: translate3d(0, -100px, 0)
+        .bottom
+          transform: translate3d(0, 100px, 0)
+
     .mini-player
       display flex
       align-items center
@@ -189,5 +220,52 @@ export default {
       z-index 160
       width 100%
       height 1.2rem
-      box-shadow 0 -4px 10px rgba(112, 115, 123, .1)
+      background #fafafa
+      box-shadow 0 -4px 14px rgba(112, 115, 123, .1)
+      .img-wrapper
+        position absolute
+        left .24rem
+        top -.2rem
+        width 1.2rem
+        height 1.2rem
+        border-radius 50%
+        background: #000
+        overflow hidden
+        box-shadow 0 4px 8px rgba(112, 115, 123, .2)
+        img
+          display block
+          width 1.2rem
+          height 1.2rem
+      .song-info
+        flex 1
+        padding-left 1.8rem
+        height 1.2rem
+        .song-name
+          padding-top .2rem
+          font-size $font-size-ml
+          color $font-color-m
+        .singer
+          padding-top .1rem
+          font-size $font-size-s
+          color #b3b3b3
+      .play-button
+        width 60px
+        height 100%
+        text-align center
+        span
+          display block
+          height 100%
+          line-height 1.2rem
+          color $color-theme
+          font-size .6rem
+      .play-list
+        width 60px
+        height 100%
+        text-align center
+        span
+          display block
+          height 100%
+          line-height 1.2rem
+          color $color-theme
+          font-size .4rem
 </style>
