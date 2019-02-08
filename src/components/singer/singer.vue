@@ -48,7 +48,6 @@ export default {
             item.toFirstLetter = py[0][0].toUpperCase()
           })
           this.singers = this._normalizeSinger(singers)
-          console.log(this.singers)
         }
       })
     },
