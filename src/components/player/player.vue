@@ -7,12 +7,12 @@
         <img width="100%" height="100%" :src="currentSong.image">
       </div>
       <div class="top">
-        <span class="iconfont icon-under-arrow under-arrow" @click="back"></span>
+        <span class="iconfont icon-double-underarrow under-arrow" @click="back"></span>
         <h2 class="top-title">{{currentSong.name}}</h2>
       </div>
       <p class="singer">{{currentSong.singer}}</p>
       <div class="album-wrapper">
-        <div class="img-wrapper">
+        <div class="img-wrapper" :class="cdCls">
           <div class="cd-img-wrapper">
             <img class="cd-img" :src="currentSong.image" alt="">
           </div>
@@ -36,7 +36,7 @@
               <span class="iconfont icon-previous-icon"></span>
             </div>
             <div class="icon">
-              <span class="iconfont icon-player-paly-icon play-icon"></span>
+              <span @click="togglePlaying" class="iconfont play-icon" :class="playIcon"></span>
             </div>
             <div class="icon">
               <span class="iconfont icon-next-icon"></span>
@@ -52,27 +52,36 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="img-wrapper">
-          <img :src="currentSong.image">
+          <img :src="currentSong.image" :class="cdCls">
         </div>
         <div class="song-info">
           <h3 class="song-name">{{currentSong.name}}</h3>
           <p class="singer">{{currentSong.singer}}</p>
         </div>
         <div class="play-button">
-          <span class="iconfont icon-Triangle"></span>
+          <span class="iconfont" :class="miniIcon" @click.stop="togglePlaying"></span>
         </div>
         <div class="play-list">
           <span class="iconfont icon-more"></span>
         </div>
       </div>
     </transition>
+    <audio ref="audio"></audio>
   </div>
 </template>
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
+import {getSong} from '../../api/song'
+import {ERR_OK} from '../../api/config'
+
 export default {
   name: 'player',
+  data () {
+    return {
+      url: ''
+    }
+  },
   methods: {
     back () {
       this.setFullScreen(false)
@@ -80,19 +89,57 @@ export default {
     open () {
       this.setFullScreen(true)
     },
+    togglePlaying () { // 切换播放状态
+      const audio = this.$refs.audio
+      this.setPlayingState(!this.playing)
+      this.playing ? audio.play() : audio.pause()
+    },
+    _getSong (id) {
+      getSong(id).then((res) => {
+        if (res.status === ERR_OK) {
+          this.url = res.data.data[0].url
+        }
+      })
+    },
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE'
     })
   },
   computed: {
+    cdCls () {
+      return this.playing ? 'play' : 'play pause'
+    },
+    playIcon () {
+      return this.playing ? 'icon-CombinedShape' : 'icon-player-paly-icon'
+    },
+    miniIcon () {
+      return this.playing ? 'icon-pause' : 'icon-Triangle'
+    },
     ...mapGetters([
       'fullScreen',
       'playList',
-      'currentSong'
+      'currentSong',
+      'playing'
     ])
   },
-  mounted () {
-    console.log(this.currentSong)
+  watch: {
+    currentSong (newVal, oldVal) {
+      if (!newVal.id) {
+        return
+      }
+      if (newVal.id === oldVal.id) {
+        return
+      }
+      this.$refs.audio.pause()
+      this.$refs.audio.currentTime = 0
+      this._getSong(newVal.id)
+    },
+    url (newUrl) {
+      this.$refs.audio.src = newUrl
+      this.setPlayingState(true)
+      this.$refs.audio.play()
+    }
   }
 }
 </script>
@@ -134,7 +181,7 @@ export default {
           position relative
           z-index 100
           display block
-          font-size $font-size-xs
+          font-size $font-size-m
           color #fff
           line-height 1rem
           margin-left .24rem
@@ -163,6 +210,10 @@ export default {
           position absolute
           z-index -1
           overflow hidden
+          &.play
+            animation rotate 20s linear infinite
+          &.pause
+            animation-play-state paused
           .cd-img-wrapper
             width 64%
             height 64%
@@ -236,6 +287,10 @@ export default {
           display block
           width 1.2rem
           height 1.2rem
+          &.play
+            animation rotate 20s linear infinite
+          &.pause
+            animation-play-state paused
       .song-info
         flex 1
         padding-left 1.8rem
@@ -268,4 +323,9 @@ export default {
           line-height 1.2rem
           color $color-theme
           font-size .4rem
+  @keyframes rotate
+    0%
+      transform: rotate(0)
+    100%
+      transform: rotate(360deg)
 </style>
