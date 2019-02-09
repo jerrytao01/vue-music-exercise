@@ -32,14 +32,14 @@
             <div class="icon">
               <span class="iconfont icon-cycle-icon"></span>
             </div>
-            <div class="icon">
-              <span class="iconfont icon-previous-icon"></span>
+            <div class="icon" :class="disableCls">
+              <span @click="prev" class="iconfont icon-previous-icon"></span>
             </div>
-            <div class="icon">
+            <div class="icon" :class="disableCls">
               <span @click="togglePlaying" class="iconfont play-icon" :class="playIcon"></span>
             </div>
-            <div class="icon">
-              <span class="iconfont icon-next-icon"></span>
+            <div class="icon" :class="disableCls">
+              <span @click="next" class="iconfont icon-next-icon"></span>
             </div>
             <div class="icon">
               <span class="iconfont icon-dislike"></span>
@@ -66,7 +66,7 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio"></audio>
+    <audio @canplay="ready" @error="error" ref="audio"></audio>
   </div>
 </template>
 
@@ -79,7 +79,8 @@ export default {
   name: 'player',
   data () {
     return {
-      url: ''
+      url: '',
+      songReady: false
     }
   },
   methods: {
@@ -94,6 +95,40 @@ export default {
       this.setPlayingState(!this.playing)
       this.playing ? audio.play() : audio.pause()
     },
+    prev () {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playList.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    next () {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index === this.playList.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    ready () {
+      this.songReady = true
+    },
+    error () {
+      this.songReady = true
+    },
     _getSong (id) {
       getSong(id).then((res) => {
         if (res.status === ERR_OK) {
@@ -103,10 +138,14 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     })
   },
   computed: {
+    disableCls () {
+      return this.songReady ? '' : 'disable'
+    },
     cdCls () {
       return this.playing ? 'play' : 'play pause'
     },
@@ -120,7 +159,8 @@ export default {
       'fullScreen',
       'playList',
       'currentSong',
-      'playing'
+      'playing',
+      'currentIndex'
     ])
   },
   watch: {
@@ -221,6 +261,7 @@ export default {
             border-radius 50%
             margin 0 auto
             transform translateY(29%)
+            overflow hidden
             .cd-img
               display block
               width 100%
@@ -243,6 +284,8 @@ export default {
             height 1rem
             .icon
               flex 1
+              &.disable
+                opacity .5
               span
                 font-size $font-size-xl
                 display block
