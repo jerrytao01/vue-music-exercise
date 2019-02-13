@@ -23,9 +23,11 @@
           <p class="lyric-desc">总是学不会，再聪明一点</p>
         </div>
         <div class="progress-wrapper">
-          <span class="time time-l"></span>
-          <div class="progress-bar-wrapper"></div>
-          <span class="time time-r"></span>
+          <span class="time time-l">{{format(currentTime)}}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar :percent="percent" @percentChangeEnd="percentChangeEnd" @percentChange="percentChange"></progress-bar>
+          </div>
+          <span class="time time-r">{{format(duration)}}</span>
         </div>
         <div class="control-wrapper">
           <div class="control">
@@ -66,7 +68,7 @@
         </div>
       </div>
     </transition>
-    <audio @canplay="ready" @error="error" ref="audio"></audio>
+    <audio @canplay="ready" @error="error" ref="audio" @timeupdate="updateTime"></audio>
   </div>
 </template>
 
@@ -74,13 +76,18 @@
 import {mapGetters, mapMutations} from 'vuex'
 import {getSong} from '../../api/song'
 import {ERR_OK} from '../../api/config'
+import ProgressBar from '../../base/progress-bar/progress-bar'
 
 export default {
   name: 'player',
+  components: {ProgressBar},
   data () {
     return {
       url: '',
-      songReady: false
+      songReady: false,
+      currentTime: 0,
+      duration: 0,
+      percent: 0
     }
   },
   methods: {
@@ -94,6 +101,37 @@ export default {
       const audio = this.$refs.audio
       this.setPlayingState(!this.playing)
       this.playing ? audio.play() : audio.pause()
+    },
+    updateTime (e) {
+      this.currentTime = e.target.currentTime
+    },
+    format (interval) { // 转换时间
+      interval = interval | 0
+      let minute = interval / 60 | 0
+      let second = interval % 60
+      if (second < 10) {
+        second = '0' + second
+      }
+      return minute + ':' + second
+    },
+    percentChange (percent) {
+      this.move = true
+      const currentTime = this.duration * percent
+      this.currentTime = currentTime
+      this.$refs.audio.currentTime = currentTime
+      if (!this.playing) {
+        this.$refs.audio.play()
+        this.setPlayingState(true)
+      }
+    },
+    percentChangeEnd (percent) {
+      this.move = false
+      const currentTime = this.duration * percent
+      this.$refs.audio.currentTime = currentTime
+      if (!this.playing) {
+        this.$refs.audio.play()
+        this.setPlayingState(true)
+      }
     },
     prev () {
       if (!this.songReady) {
@@ -179,7 +217,19 @@ export default {
       this.$refs.audio.src = newUrl
       this.setPlayingState(true)
       this.$refs.audio.play()
+      let stop = setInterval(() => {
+        this.duration = this.$refs.audio.duration
+        if (this.duration) {
+          clearInterval(stop)
+        }
+      }, 150)
+    },
+    currentTime () {
+      this.percent = this.currentTime / this.duration
     }
+  },
+  created () {
+    this.move = false
   }
 }
 </script>
@@ -274,10 +324,30 @@ export default {
             text-align center
             font-size $font-size-m
             color #fff
+        .progress-wrapper
+          display: flex
+          align-items: center
+          width: 86%
+          margin: .6rem auto 0 auto
+          padding: 10px 0
+          .time
+            color #fff
+            font-size: $font-size-m
+            flex: 0 0 30px
+            line-height: 30px
+            width: 30px
+            &.time-l
+              text-align: left
+              margin-right 10px
+            &.time-r
+              text-align: right
+              margin-left 10px
+          .progress-bar-wrapper
+            flex 1
         .control-wrapper
           position absolute
           /*bottom 1.5rem*/
-          margin-top 1.5rem
+          margin-top .3rem
           width 100%
           .control
             display flex
