@@ -6,3 +6,9 @@ export function getSong (id) {
 
   return axios.get(songUrl)
 }
+
+export function getLyric (id) {
+  const lyricUrl = url + `/lyric?id=${id}`
+
+  return axios.get(lyricUrl)
+}

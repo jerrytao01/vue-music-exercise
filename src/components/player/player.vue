@@ -74,11 +74,12 @@
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-import {getSong} from '../../api/song'
+import {getSong, getLyric} from '../../api/song'
 import {ERR_OK} from '../../api/config'
 import ProgressBar from '../../base/progress-bar/progress-bar'
 import {playMode} from '../../common/js/config'
 import {shuffle} from '../../common/js/util'
+import Lyric from 'lyric-parser'
 
 export default {
   name: 'player',
@@ -87,9 +88,12 @@ export default {
     return {
       url: '',
       songReady: false,
+      currentLyric: null,
+      currentLineNum: 0,
       currentTime: 0,
       duration: 0,
-      percent: 0
+      percent: 0,
+      noLyric: false
     }
   },
   methods: {
@@ -205,6 +209,28 @@ export default {
         }
       })
     },
+    _getLyric (id) {
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+        this.currentLyric = null
+      }
+      this.noLyric = false
+      getLyric(id).then((res) => {
+        console.log(res.data.lrc.lyric)
+      })
+      getLyric(id).then((res) => {
+        this.currentLyric = new Lyric(res.data.lrc.lyric, this.handleLyric)
+        if (this.playing) {
+          this.currentLyric.play()
+          this.currentLineNum = 0
+          this.$refs.lyricList.scrollTo(0, 0, 1000)
+        }
+      }).catch(() => {
+        this.currentLyric = null
+        this.noLyric = true
+        this.currentLineNum = 0
+      })
+    },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
@@ -252,6 +278,7 @@ export default {
       this._getSong(newVal.id)
     },
     url (newUrl) {
+      this._getLyric(this.currentSong.id)
       this.$refs.audio.src = newUrl
       this.setPlayingState(true)
       this.$refs.audio.play()
