@@ -31,8 +31,8 @@
         </div>
         <div class="control-wrapper">
           <div class="control">
-            <div class="icon">
-              <span class="iconfont icon-cycle-icon"></span>
+            <div class="icon" @click="changeMode">
+              <span class="iconfont" :class="iconMode"></span>
             </div>
             <div class="icon" :class="disableCls">
               <span @click="prev" class="iconfont icon-previous-icon"></span>
@@ -68,7 +68,7 @@
         </div>
       </div>
     </transition>
-    <audio @canplay="ready" @error="error" ref="audio" @timeupdate="updateTime"></audio>
+    <audio @canplay="ready" @error="error" ref="audio" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
 
@@ -77,6 +77,8 @@ import {mapGetters, mapMutations} from 'vuex'
 import {getSong} from '../../api/song'
 import {ERR_OK} from '../../api/config'
 import ProgressBar from '../../base/progress-bar/progress-bar'
+import {playMode} from '../../common/js/config'
+import {shuffle} from '../../common/js/util'
 
 export default {
   name: 'player',
@@ -133,6 +135,35 @@ export default {
         this.setPlayingState(true)
       }
     },
+    changeMode () { // 改变播放模式
+      const mode = (this.mode + 1) % 3
+      this.setPlayMode(mode)
+      let list = null
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      this._resetCurrentIndex(list)
+      this.setPlaylist(list)
+    },
+    _resetCurrentIndex (list) {
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
+    },
+    end () { // audio播放完成派发的事件
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
+    },
+    loop () {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+    },
     prev () {
       if (!this.songReady) {
         return
@@ -177,7 +208,9 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlaylist: 'SET_PLAYLIST'
     })
   },
   computed: {
@@ -193,12 +226,17 @@ export default {
     miniIcon () {
       return this.playing ? 'icon-pause' : 'icon-Triangle'
     },
+    iconMode () {
+      return this.mode === playMode.sequence ? 'icon-cycle-icon' : this.mode === playMode.loop ? 'icon-single-cycle-icon' : 'icon-random-icon'
+    },
     ...mapGetters([
       'fullScreen',
       'playList',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'mode',
+      'sequenceList'
     ])
   },
   watch: {
