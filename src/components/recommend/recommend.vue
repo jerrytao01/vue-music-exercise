@@ -16,7 +16,7 @@
         <h2 class="title-list">推荐歌单<span class="iconfont icon-back-icon back-icon"></span></h2>
         <div class="recommend-list-wrapper" :data="discList">
           <div class="list-content-wrapper" v-for="(items, index) in caculateDiscList" :key="index">
-            <a v-for="item in items" class="item-wrapper" :key="item.id">
+            <a @click="selectItem(item)" v-for="item in items" class="item-wrapper" :key="item.id">
               <div class="img-wrapper">
                 <img class="list-img" v-lazy="item.picUrl" alt="">
                 <div class="has-listen"><span class="iconfont icon-listen listen"></span>{{_caculateListen(item.playCount)}}
@@ -31,6 +31,7 @@
         <loading></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -41,6 +42,7 @@ import Banner from '../../base/banner/banner'
 import Scroll from '../../base/scroll/scroll'
 import Loading from '../../base/loading/loading'
 import {playlistMixin} from '../../common/js/mixin'
+import {mapMutations} from 'vuex'
 
 const bannerUrl = '/banner'
 const recommendList = '/personalized'
@@ -66,6 +68,12 @@ export default {
         this.checkLoaded = true
       }
     },
+    selectItem (item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`
+      })
+      this.setDisc(item)
+    },
     _getBannerList () {
       axios.get(url + bannerUrl).then((res) => {
         if (res.status === ERR_OK) {
@@ -90,7 +98,10 @@ export default {
         return
       }
       return result
-    }
+    },
+    ...mapMutations({
+      setDisc: 'SET_DESC'
+    })
   },
   computed: {
     caculateDiscList () {

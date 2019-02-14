@@ -124,6 +124,7 @@ export default {
     bottom 0
     left 0
     background #fafafa
+    z-index 100
     .back
       position absolute
       top .3rem

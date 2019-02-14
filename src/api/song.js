@@ -12,3 +12,8 @@ export function getLyric (id) {
 
   return axios.get(lyricUrl)
 }
+
+export function getSongList (id) {
+  const songListUrl = url + `/playlist/detail?id=${id}`
+  return axios.get(songListUrl)
+}
