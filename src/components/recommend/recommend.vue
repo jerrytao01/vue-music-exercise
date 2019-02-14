@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <scroll class="wrapper" ref="scroll">
       <div> <!--这是的距离是需要滚动的内容-->
         <div class="banner-wrapper" v-if="bannerList.length">
@@ -40,12 +40,14 @@ import {ERR_OK, url} from '../../api/config'
 import Banner from '../../base/banner/banner'
 import Scroll from '../../base/scroll/scroll'
 import Loading from '../../base/loading/loading'
+import {playlistMixin} from '../../common/js/mixin'
 
 const bannerUrl = '/banner'
 const recommendList = '/personalized'
 
 export default {
   name: 'recommend',
+  mixins: [playlistMixin],
   data () {
     return {
       bannerList: [],
@@ -53,6 +55,11 @@ export default {
     }
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '1.4rem' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
     loadImg () {
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh()

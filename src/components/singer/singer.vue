@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <listview :list="singers" @select="selectSinger"></listview>
+  <div ref="singer">
+    <listview :list="singers" @select="selectSinger" ref="list"></listview>
     <router-view></router-view>
   </div>
 </template>
@@ -11,6 +11,7 @@ import {ERR_OK, url} from '../../api/config'
 import Singer from '../../common/js/singer'
 import Listview from '../../base/listview/listview'
 import {mapMutations} from 'vuex'
+import {playlistMixin} from '../../common/js/mixin'
 
 const singUrl = '/top/artists'
 const limit = 'limit=100'
@@ -20,12 +21,18 @@ const pinyin = require('pinyin')
 
 export default {
   name: 'singer',
+  mixins: [playlistMixin],
   data () {
     return {
       singers: null
     }
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '1.4rem' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     selectSinger (singer) {
       this.$router.push({
         path: `/singer/${singer.id}`
