@@ -89,5 +89,5 @@ export default {
   .slide-enter, .slide-leave-to
     height 0
   .slide-enter-active, .slide-leave-active
-    transition all .2s linear
+    transition all .3s
 </style>

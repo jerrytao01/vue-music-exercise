@@ -5,7 +5,7 @@
         <span class="iconfont icon-more more"></span>
       </div>
       <div class="title-wrapper">VUEMUSIC</div>
-      <div class="search-wrapper">
+      <div class="search-wrapper" @click="searchEvent">
         <span class="iconfont icon-Oval search"></span>
       </div>
     </div>
@@ -14,7 +14,12 @@
 
 <script>
 export default {
-  name: 'music-header'
+  name: 'music-header',
+  methods: {
+    searchEvent () {
+      this.$router.push('/search')
+    }
+  }
 }
 </script>
 

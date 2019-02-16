@@ -13,3 +13,17 @@ export function shuffle (arr) { // 洗牌算法，将播放列表打乱
 
   return _arr
 }
+
+// 截流函数
+export function debounce (func, delay) {
+  let timer
+
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      func.apply(this, args)
+    }, delay)
+  }
+}
