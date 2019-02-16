@@ -128,6 +128,7 @@ export default {
   @import "../../common/stylus/variable.styl"
   .recommend
     position fixed
+    z-index 2
     width 100%
     top 1.76rem
     bottom 0 // 这里是关键，这样可以保证视口的高度在本屏幕内

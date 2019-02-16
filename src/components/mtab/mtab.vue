@@ -81,6 +81,7 @@ export default {
 
   .back-img
     position fixed
+    z-index 1
     width 100%
     top 1.76rem
     height 1.44rem
