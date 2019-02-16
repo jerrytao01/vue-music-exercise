@@ -86,7 +86,6 @@ export default {
       this.page += 30
       getSearchSuggest(this.query).then((res) => {
         this.suggest = res.data.result
-        console.log(this.suggest)
       })
     },
     selectItem (item) {
@@ -102,7 +101,6 @@ export default {
       this.$emit('select')
     },
     selectList (item) {
-      console.log('item', item)
       const list = {}
       list.name = item.name
       list.id = item.id
