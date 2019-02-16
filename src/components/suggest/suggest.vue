@@ -1,5 +1,5 @@
 <template>
-  <div class="suggest">
+  <div class="suggest" v-show="query">
     <div class="search-suggest" v-show="!searchShow && query && songs.length>0">
       <p class="title" v-show="showSinger && showList">最佳匹配</p>
       <div @click="selectItem(suggest.artists[0])" v-if="suggest.artists && showSinger" class="search-suggest-item">
@@ -24,7 +24,7 @@
           <p class="singer">{{item.singer}}</p>
         </div>
       </li>
-      <loading v-show="!haveMore && !songs.length && query"></loading>
+      <loading :title="null" v-show="haveMore && query"></loading>
     </ul>
     <div v-show="!haveMore && !songs.length && query" class="no-result-wrapper">
       抱歉，暂无搜索结果
@@ -109,7 +109,7 @@ export default {
       list.picUrl = item.coverImgUrl
       list.playCount = item.playCount
       this.$router.push({
-        path: `/search/list/${list.id}`
+        path: `/search/${list.id}`
       })
       this.setMusicList(list)
       this.$emit('select')
@@ -118,12 +118,10 @@ export default {
       getSongDetail(item.id).then((res) => {
         item.image = res.data.songs[0].al.picUrl
         this.insertSong(item)
-        // console.log(item.image)
       })
       this.$emit('select')
     },
     searchMore () {
-      console.log('searchMore')
       if (!this.haveMore) {
         return
       }
@@ -147,7 +145,7 @@ export default {
     },
     ...mapMutations({
       setSinger: 'SET_SINGER',
-      setMusicList: 'SET_MUSIC_LIST'
+      setMusicList: 'SET_DESC'
     }),
     ...mapActions([
       'insertSong'
@@ -205,6 +203,7 @@ export default {
         .text
           width 100%
           p
+            width 5rem
             padding .06rem 0
             no-wrap()
 
@@ -225,12 +224,12 @@ export default {
 
         .song
           font-size $font-size-l
-          color #666
+          color #333
           no-wrap()
 
         .singer
           font-size $font-size-s
-          color #666
+          color #999
           no-wrap()
 
       .icon
@@ -243,12 +242,14 @@ export default {
         font-size $font-size-m
         color #666
         overflow hidden
+        no-wrap()
 
   .no-result-wrapper
     position fixed
     overflow hidden
     left 50%
     top 40vh
-    transform translatex(-50%)
-    color $color-text
+    transform translateX(-50%)
+    color #666
+    font-size $font-size-l
 </style>

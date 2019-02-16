@@ -609,14 +609,18 @@ export default {
         height 1.2rem
 
         .song-name
+          width 3.2rem
           padding-top .2rem
           font-size $font-size-ml
           color $font-color-m
+          no-wrap()
 
         .singer
           padding-top .1rem
           font-size $font-size-s
           color #b3b3b3
+          width 3.2rem
+          no-wrap()
 
       .play-button
         width 60px

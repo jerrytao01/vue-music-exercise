@@ -61,8 +61,10 @@ export default {
       border none
       outline none
       border-radius .04rem
-      &::placeholder
-        color rgba(255, 255, 255, 0.6)
+      &::-webkit-input-placeholder
+        color #ccc
+      &::-moz-input-placeholder
+        color #ccc
 
     .icon-delete
       position absolute

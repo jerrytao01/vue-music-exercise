@@ -5,7 +5,7 @@
         <span @click="back" class="iconfont icon-back-icon back-icon"></span>
         <search-box ref="searchBox" @query="onQueryChange"></search-box>
       </div>
-      <scroll ref="scroll" class="search-scroll-wrapper">
+      <scroll ref="scroll" class="search-scroll-wrapper" :pullup="pullup" @scrollToEnd="searchMore">
         <div ref="search">
           <div class="search-hots" v-show="!query">
             <p class="title">热门搜索</p>
@@ -16,6 +16,7 @@
           </div>
         </div>
       </scroll>
+      <router-view></router-view>
     </div>
   </transition>
 </template>
@@ -33,13 +34,13 @@ export default {
   data () {
     return {
       hots: [],
-      query: ''
+      query: '',
+      pullup: true
     }
   },
   methods: {
     handlePlaylist (playlist) {
       const bottom = playlist.length > 0 ? '1.4rem' : ''
-      console.log(bottom)
       this.$refs.scroll.$el.style.bottom = bottom
       this.$refs.searchWrapper.style.bottom = bottom
       this.refresh()
@@ -59,6 +60,9 @@ export default {
       setTimeout(() => {
         this.$refs.scroll.refresh()
       }, 20)
+    },
+    searchMore () {
+      this.$refs.suggest.searchMore()
     },
     _getSearchHot () {
       getSearchHot().then((res) => {
