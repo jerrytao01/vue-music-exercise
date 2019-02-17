@@ -52,7 +52,6 @@ export function deleteSearch (query) {
   deleteFromArray(searches, (item) => {
     return item === query
   })
-  console.log('delet', searches)
 
   storage.set(SEARCH_KEY, searches)
   return searches

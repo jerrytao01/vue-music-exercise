@@ -27,7 +27,6 @@ export default {
         ret.push(creatSong(item))
       })
       this.listDetail = ret
-      console.log(this.listDetail)
     }
   },
   computed: {

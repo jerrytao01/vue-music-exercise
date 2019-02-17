@@ -4,7 +4,7 @@
       <li :key="item" class="search-item" @click="selectItem(item)" v-for="item in searches">
         <span class="text">{{item}}</span>
         <span class="icon" @click.stop="deleteOne(item)">
-          <i class="icon-delete"></i>
+          <i class="iconfont icon-guanbi close-icon"></i>
         </span>
       </li>
     </transition-group>
@@ -38,9 +38,9 @@ export default {
     .search-item
       display: flex
       align-items: center
-      height 35px
+      height .7rem
       overflow hidden
-      font-size 14px
+      font-size $font-size-m
       &.list-enter-active, &.list-leave-active
         transition all 0.1s
 
@@ -53,7 +53,7 @@ export default {
 
       .icon
         extend-click()
-        .icon-delete
-          font-size $font-size-s
-          color #666
+        .close-icon
+          font-size $font-size-xs
+          color #aaa
 </style>

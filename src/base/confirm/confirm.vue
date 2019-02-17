@@ -66,7 +66,7 @@ export default {
     top 0
     bottom 0
     z-index: 500
-    background-color rgba(0, 0, 0, 0.3)
+    background-color rgba(0, 0, 0, 0.5)
     &.confirm-fade-enter-active
       animation confirm-fadein 0.3s
       .confirm-content
@@ -79,11 +79,11 @@ export default {
       transform translate(-50%, -50%)
       z-index 999
       .confirm-content
-        width 270px
-        border-radius 5px
-        background #666
+        width 5.4rem
+        border-radius .1rem
+        background #fafafa
         .text
-          padding 12px 15px
+          padding .24rem .3rem
           line-height 22px
           text-align center
           font-size $font-size-m
@@ -96,12 +96,13 @@ export default {
           font-size $font-size-m
           .operate-btn
             flex 1
-            line-height 22px
-            padding 12px 0
-            border-top 1px solid red
+            line-height .44rem
+            padding .24rem 0
+            border-top 1px solid #ccc
             color $color-theme
             &.left
-              border-right 1px solid #999
+              color #666
+              border-right 1px solid #ccc
 
   @keyframes confirm-fadein
     0%

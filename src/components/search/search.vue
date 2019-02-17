@@ -16,7 +16,7 @@
               <h1 class="title">
                 <span class="text">搜索历史</span>
                 <span class="clear" @click="showConfirm">
-                  <span class="iconfont icon-close-icon"></span>
+                  <span class="iconfont icon-lajitong"></span>
                 </span>
               </h1>
               <search-list @select=addQuery @delete="deleteSearchHistory" :searches="searchHistory"></search-list>
@@ -138,7 +138,6 @@ export default {
       position fixed
       top .88rem
       bottom 0
-      /*height 100%*/
       width 100%
       overflow hidden
       font-size 0
@@ -150,7 +149,7 @@ export default {
           padding .1rem .1rem 0 .1rem
           height .6rem
           line-height .6rem
-          font-size $font-size-s
+          font-size $font-size-ml
           color #666
 
         .search-hots-item
@@ -161,7 +160,7 @@ export default {
           border-radius .1rem
           line-height .4rem
           color #777
-          font-size $font-size-m
+          font-size $font-size-sm
 
       .shortcut-wrapper
         position relative
@@ -196,16 +195,16 @@ export default {
             display flex
             align-items center
             height .6rem
-            font-size $font-size-m
+            font-size $font-size-ml
             color #666
 
             .text
               flex 1
 
             .clear
-              .icon-clear
-                font-size $font-size-m
-                color #666
+              .icon-lajitong
+                font-size $font-size-l
+                color #999
 
       .search-result
         position relative
