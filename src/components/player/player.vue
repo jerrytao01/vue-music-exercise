@@ -77,11 +77,12 @@
         <div class="play-button">
           <span class="iconfont" :class="miniIcon" @click.stop="togglePlaying"></span>
         </div>
-        <div class="play-list">
+        <div class="play-list" @click.stop="showPlaylist">
           <span class="iconfont icon-more"></span>
         </div>
       </div>
     </transition>
+    <playlist @stopMusic="stopMusic" ref="playlist"></playlist>
     <audio @canplay="ready" @error="error" ref="audio" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
@@ -95,10 +96,11 @@ import {playMode} from '../../common/js/config'
 import {shuffle} from '../../common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from '../../base/scroll/scroll'
+import Playlist from '../playlist/playlist'
 
 export default {
   name: 'player',
-  components: {Scroll, ProgressBar},
+  components: {Playlist, Scroll, ProgressBar},
   data () {
     return {
       url: '',
@@ -119,6 +121,13 @@ export default {
     },
     open () {
       this.setFullScreen(true)
+    },
+    stopMusic () {
+      this.$refs.audio.pause()
+      console.log('删除最后一首的时候暂停音乐')
+    },
+    showPlaylist () {
+      this.$refs.playlist.show()
     },
     togglePlaying () { // 切换播放状态
       const audio = this.$refs.audio
